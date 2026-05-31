@@ -8,21 +8,17 @@ import { FileUploadDropzone } from './components/FileUploadDropzone';
 import { FileList } from './components/FileList';
 import { QuizForm } from './components/QuizForm';
 import { useFileUpload } from './hooks/useFileUpload';
+import { GenerateQuiz } from './components/GenerateQuiz';
+import { Theme } from './components/Theme';
 
 export default function Home() {
-  const theme = createTheme({
-    fontFamily: 'Verdana, sans-serif',
-    fontFamilyMonospace: 'Verdana, sans-serif',
-    primaryColor: 'teal'
-  });
-
   const { files, addFiles, removeFile } = useFileUpload();
   const [quizType, setQuizType] = useState<string | null>(null);
   const [instructions, setInstructions] = useState('');
   const [questionCount, setQuestionCount] = useState(20);
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={Theme}>
       <Container p={'lg'}>
         <Stack gap={'xl'}>
           <PageHeader />
@@ -42,7 +38,12 @@ export default function Home() {
           />
 
           <Group justify="flex-end">
-            <Button variant="filled">Quiz me!</Button>
+            <GenerateQuiz 
+              quizType={quizType}
+              questionCount={questionCount}
+              instructions={instructions}
+              files={files}
+            />
           </Group>
         </Stack>
       </Container>

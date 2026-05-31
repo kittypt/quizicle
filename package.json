@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/genai": "^2.7.0",
     "@mantine/charts": "^9.2.0",
     "@mantine/core": "^9.2.0",
     "@mantine/dropzone": "^9.2.0",

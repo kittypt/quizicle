@@ -9,6 +9,7 @@ interface FileUploadDropzoneProps {
   onDrop: (files: File[]) => void;
 }
 
+// Component for file upload using Mantine's Dropzone, allowing users to drag and drop files or click to select files
 export const FileUploadDropzone = ({ onDrop }: FileUploadDropzoneProps) => {
   return (
     <Stack gap={'xs'}>

@@ -9,6 +9,7 @@ interface FileListProps {
   onRemove: (index: number) => void;
 }
 
+// Component to display the list of uploaded files with an option to remove each file
 export const FileList = ({ files, onRemove }: FileListProps) => {
   return (
     <Group>
