@@ -1,15 +1,13 @@
 'use client';
 
-import { createTheme, MantineProvider } from '@mantine/core';
 import { useState } from 'react';
-import { Button, Container, Group, Stack } from '@mantine/core';
+import { Container, Group, Stack } from '@mantine/core';
 import { PageHeader } from './components/PageHeader';
 import { FileUploadDropzone } from './components/FileUploadDropzone';
 import { FileList } from './components/FileList';
 import { QuizForm } from './components/QuizForm';
 import { useFileUpload } from './hooks/useFileUpload';
 import { GenerateQuiz } from './components/GenerateQuiz';
-import { Theme } from './components/Theme';
 
 export default function Home() {
   const { files, addFiles, removeFile } = useFileUpload();
@@ -18,7 +16,6 @@ export default function Home() {
   const [questionCount, setQuestionCount] = useState(20);
 
   return (
-    <MantineProvider theme={Theme}>
       <Container p={'lg'}>
         <Stack gap={'xl'}>
           <PageHeader />
@@ -47,6 +44,5 @@ export default function Home() {
           </Group>
         </Stack>
       </Container>
-    </MantineProvider>
   );
 }

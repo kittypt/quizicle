@@ -25,31 +25,22 @@ const makeFilenameFromText = (text: string) => {
 };
 
 const fetchPageMetadata = async (href: string) => {
-  const url = new URL(href);
-  const fallback = {
-    title: url.hostname,
-    iconUrl: `${url.origin}/favicon.ico`,
-  };
-
   try {
-    const response = await fetch(url.toString(), { mode: 'cors' });
-    if (!response.ok) {
-      return fallback;
-    }
-
-    const html = await response.text();
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const title = doc.querySelector('title')?.textContent?.trim() || fallback.title;
-    const iconElement = Array.from(doc.querySelectorAll('link[rel]')).find((element) => {
-      const rel = element.getAttribute('rel')?.toLowerCase() || '';
-      return rel.includes('icon');
+    // Call internal server route to bypass CORS and fetch page metadata
+    const response = await fetch('/api/scrape', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targetUrl: href }),
     });
 
-    const iconHref = iconElement?.getAttribute('href');
-    const iconUrl = iconHref ? new URL(iconHref, url).toString() : fallback.iconUrl;
-    return { title, iconUrl };
+    if (!response.ok) throw new Error();
+    return await response.json();
   } catch {
-    return fallback;
+    const url = new URL(href);
+    return {
+      title: url.hostname,
+      iconUrl: `${url.origin}/favicon.ico`,
+    };
   }
 };
 

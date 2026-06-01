@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     };
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.5-flash',
       contents: `Create a quiz based on the following criteria.
 
             Context Reference Materials (Base the questions strictly on this content if provided):
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
             Quiz Generation Specifications:
             - Quiz Type/Topic: ${quizType}
             - Number of Questions: ${questionCount}
-            - Additional Instructions: ${instructions}`,
+            - Additional Instructions (user's specific requirements or constraints): ${instructions}`,
       config: {
         responseMimeType: 'application/json',
         responseSchema: quizSchema as any, // Using 'as any' bypasses SDK internal interface quirks
@@ -55,6 +55,7 @@ export async function POST(request: Request) {
     });
 
     const quizJsonText = response.text;
+    console.log("json =", quizJsonText);
     
     if (!quizJsonText) {
       throw new Error("Gemini returned an empty response.");

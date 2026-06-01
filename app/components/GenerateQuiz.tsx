@@ -1,5 +1,9 @@
+
+
 import React, { useState } from 'react';
 import { Button } from '@mantine/core';
+import { useRouter } from 'next/navigation';
+import { useQuiz } from '@/context/QuizContext';
 
 interface FileEntry {
     file: File;
@@ -7,11 +11,10 @@ interface FileEntry {
 }
 
 interface GenerateQuizProps {
-  quizType: string;
+  quizType: string | null;
   questionCount: number;
   instructions: string;
   files: FileEntry[];
-  onQuizGenerated: (data: any) => void;
 }
 
 export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
@@ -19,9 +22,10 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
   questionCount,
   instructions,
   files,
-  onQuizGenerated,
 }) => {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { setQuiz } = useQuiz(); // Grab our context setter
 
   const readFileContent = (file: File): Promise<string> => {
     return new Promise((resolve) => {
@@ -62,8 +66,10 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
 
       const quizData = await response.json();
       console.log("quizData =", quizData);
-    //   onQuizGenerated(quizData);
+
+      setQuiz(quizData);
       
+      router.push('/quiz');
 
     } catch (error) {
       console.error("Failed to generate quiz via backend:", error);
@@ -76,7 +82,6 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
     <Button 
       loading={loading} 
       onClick={handleGenerate}
-      color='green'
     >
       Quiz me!
     </Button>
