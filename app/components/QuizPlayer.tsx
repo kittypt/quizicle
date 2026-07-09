@@ -80,7 +80,7 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onFinished }) => {
   const progressPercent = ((currentIndex + 1) / totalQuestions) * 100;
 
   return (
-    <Card shadow="md" padding="xl" radius="md" withBorder >
+    <Card shadow="xl" padding="xl" radius="md" withBorder >
       <Stack gap="lg">
         {/* Header Context Tracking */}
         <Stack gap="xs">
@@ -89,14 +89,9 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onFinished }) => {
           </Text>
           <Progress value={progressPercent} radius="xl" size="sm" />
 
-          <Group justify="space-between" mb="lg">
-            <Text size="xs" c="dimmed" fw={700}>
-              QUESTION {currentIndex + 1} OF {totalQuestions}
-            </Text>
-            {/* <Text size="xs" c="dimmed" fw={700}>
-              {Math.round(progressPercent)}% COMPLETE
-            </Text> */}
-          </Group>
+          <Text size="xs" c="dimmed" fw={700}>
+            QUESTION {currentIndex + 1} OF {totalQuestions}
+          </Text>
         </Stack>
 
         <Stack gap="sm">
@@ -113,21 +108,27 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onFinished }) => {
           >
             <Stack gap="xs">
               {shuffledOptions.map((option, index) => (
-                <Card
+                <Radio.Card
                   key={index}
+                  value={option}
                   withBorder
                   radius="sm"
+                  p="xs"
                   style={{
                     borderColor: selectedOption === option ? 'var(--mantine-color-teal-filled)' : undefined,
                     transition: 'border-color 0.2s ease',
                   }}
                 >
-                  <Radio
+                  {/* <Radio
                     value={option}
                     label={option}
                     styles={{ body: { cursor: 'pointer', width: '100%' } }}
-                  />
-                </Card>
+                  /> */}
+                  <Group wrap="nowrap" align="center">
+                    <Radio.Indicator />
+                    <div>{option}</div>
+                  </Group>
+                </Radio.Card>
               ))}
             </Stack>
           </Radio.Group>

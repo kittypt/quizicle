@@ -27,7 +27,7 @@ export default function QuizPageRoute() {
   }
 
   return (
-    <Container size="sm" py="xl" bg="teal">
+    <Container size="sm" py="md">
       <QuizPlayer
         quiz={quiz}
         onFinished={(finalSummary) => {

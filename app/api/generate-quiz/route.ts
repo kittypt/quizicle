@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     };
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-2.5-flash',
       contents: `Create a quiz based on the following criteria.
 
             Context Reference Materials (Base the questions strictly on this content if provided):
