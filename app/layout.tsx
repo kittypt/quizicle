@@ -6,9 +6,9 @@ import { QuizProvider } from '@/context/QuizContext';
 
 
 const theme = createTheme({
-    fontFamily: 'Verdana, sans-serif',
-    fontFamilyMonospace: 'Verdana, sans-serif',
-    primaryColor: 'teal'
+  fontFamily: 'Verdana, sans-serif',
+  fontFamilyMonospace: 'Verdana, sans-serif',
+  primaryColor: 'teal'
 });
 
 export const metadata: Metadata = {

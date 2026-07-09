@@ -1,13 +1,11 @@
-
-
 import React, { useState } from 'react';
 import { Button } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/context/QuizContext';
 
 interface FileEntry {
-    file: File;
-    iconUrl?: string;
+  file: File;
+  iconUrl?: string;
 }
 
 interface GenerateQuizProps {
@@ -25,7 +23,7 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { setQuiz } = useQuiz(); // Grab our context setter
+  const { setQuiz } = useQuiz(); // Grab context setter
 
   const readFileContent = (file: File): Promise<string> => {
     return new Promise((resolve) => {
@@ -42,11 +40,11 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
       // Extract the actual text content from every uploaded file/link entry
       const contentPromises = files.map(entry => readFileContent(entry.file));
       const textContentsArray = await Promise.all(contentPromises);
-      
+
       // Combine all file contents into one solid contextual block of text
       const joinedFileContext = textContentsArray.filter(text => text.trim() !== '').join('\n\n--- Next File Content ---\n\n');
 
-      // Hit your secure Next.js API route
+      // Hit Next.js API route
       const response = await fetch('/api/generate-quiz', {
         method: 'POST',
         headers: {
@@ -68,7 +66,7 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
       console.log("quizData =", quizData);
 
       setQuiz(quizData);
-      
+
       router.push('/quiz');
 
     } catch (error) {
@@ -79,8 +77,8 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
   };
 
   return (
-    <Button 
-      loading={loading} 
+    <Button
+      loading={loading}
       onClick={handleGenerate}
     >
       Quiz me!

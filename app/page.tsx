@@ -16,33 +16,33 @@ export default function Home() {
   const [questionCount, setQuestionCount] = useState(20);
 
   return (
-      <Container p={'lg'}>
-        <Stack gap={'xl'}>
-          <PageHeader />
+    <Container p={'lg'}>
+      <Stack gap={'xl'}>
+        <PageHeader />
 
-          <Stack gap={'xs'}>
+        <Stack gap={'xs'}>
           <FileUploadDropzone onDrop={addFiles} />
           {files.length > 0 && <FileList files={files} onRemove={removeFile} />}
-          </Stack>
-
-          <QuizForm
-            quizType={quizType}
-            onQuizTypeChange={setQuizType}
-            questionCount={questionCount}
-            onQuestionCountChange={setQuestionCount}
-            instructions={instructions}
-            onInstructionsChange={setInstructions}
-          />
-
-          <Group justify="flex-end">
-            <GenerateQuiz 
-              quizType={quizType}
-              questionCount={questionCount}
-              instructions={instructions}
-              files={files}
-            />
-          </Group>
         </Stack>
-      </Container>
+
+        <QuizForm
+          quizType={quizType}
+          onQuizTypeChange={setQuizType}
+          questionCount={questionCount}
+          onQuestionCountChange={setQuestionCount}
+          instructions={instructions}
+          onInstructionsChange={setInstructions}
+        />
+
+        <Group justify="flex-end">
+          <GenerateQuiz
+            quizType={quizType}
+            questionCount={questionCount}
+            instructions={instructions}
+            files={files}
+          />
+        </Group>
+      </Stack>
+    </Container>
   );
 }

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
     // Modern SDK schema structure using native string literals for types
     const quizSchema = {
-      type: "OBJECT", 
+      type: "OBJECT",
       properties: {
         title: { type: "STRING" },
         questions: {
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
 
     const quizJsonText = response.text;
     console.log("json =", quizJsonText);
-    
+
     if (!quizJsonText) {
       throw new Error("Gemini returned an empty response.");
     }
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("Backend Error:", error);
     return NextResponse.json(
-      { error: 'Failed to generate quiz', details: error.message }, 
+      { error: 'Failed to generate quiz', details: error.message },
       { status: 500 }
     );
   }

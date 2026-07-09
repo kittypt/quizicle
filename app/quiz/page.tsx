@@ -6,7 +6,7 @@ import { Container, Button, Title, Text, Center, Stack } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 
 export default function QuizPageRoute() {
-  const { quiz, setQuiz } = useQuiz();
+  const { quiz, setQuiz, setResults } = useQuiz();
   const router = useRouter();
 
   // If a user refrshes the browser or navigates directly here without data, show a fallback wrapper
@@ -27,14 +27,19 @@ export default function QuizPageRoute() {
   }
 
   return (
-    <Container size="sm" py="xl">
-      <QuizPlayer 
-        quiz={quiz} 
-        onFinished={(finalScore: any) => {
-          alert(`Quiz Finished! Your Final Score: ${finalScore}`);
-          setQuiz(null); // Clear context data tracking
-          router.push('/'); // Route them clean back home
-        }} 
+    <Container size="sm" py="xl" bg="teal">
+      <QuizPlayer
+        quiz={quiz}
+        onFinished={(finalSummary) => {
+          setResults({
+            score: finalSummary.score,
+            totalQuestions: quiz.questions.length,
+            userAnswers: finalSummary.userAnswers
+          });
+          router.push('/results'); // Route them to results page
+          // setQuiz(null); // Clear context data tracking
+
+        }}
       />
     </Container>
   );

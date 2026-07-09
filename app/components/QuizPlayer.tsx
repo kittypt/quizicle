@@ -17,13 +17,17 @@ interface QuizData {
 
 interface QuizPlayerProps {
   quiz: QuizData;
-  onFinished: (score: number) => void; // Emits the final result when complete
+  onFinished: (results: {
+    score: number;
+    userAnswers: { questiontext: string; chosen: string; correct: string }[];
+  }) => void;
 }
 
 export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onFinished }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [score, setScore] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<{ questiontext: string; chosen: string; correct: string }[]>([]);
 
   const { title, questions } = quiz;
 
@@ -43,21 +47,31 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onFinished }) => {
   const handleNextQuestion = () => {
     if (!selectedOption) return;
 
-    // Track score if they chose the right answer string
-    if (selectedOption === currentQuestion.correctanswer) {
+    const isCorrect = selectedOption === currentQuestion.correctanswer;
+    const newScore = isCorrect ? score + 1 : score;
+
+    // Save current selection summary
+    const currentResponse = {
+      questiontext: currentQuestion.questiontext,
+      chosen: selectedOption,
+      correct: currentQuestion.correctanswer,
+    };
+
+    const updatedAnswers = [...userAnswers, currentResponse];
+
+    if (isCorrect) {
       setScore((prev) => prev + 1);
     }
-
-    // Reset radio option selection state for the next card layout
+    setUserAnswers(updatedAnswers);
     setSelectedOption(null);
 
-    // Sequence controller logic
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      // Calculate final score adjustment immediately during the callback invocation
-      const finalScore = selectedOption === currentQuestion.correctanswer ? score + 1 : score;
-      onFinished(finalScore);
+      onFinished({
+        score: newScore,
+        userAnswers: updatedAnswers,
+      });
     }
   };
 
@@ -66,68 +80,69 @@ export const QuizPlayer: React.FC<QuizPlayerProps> = ({ quiz, onFinished }) => {
   const progressPercent = ((currentIndex + 1) / totalQuestions) * 100;
 
   return (
-    <Card shadow="md" padding="xl" radius="md" withBorder mx="auto" mt="xl">
-      {/* Header Context Tracking */}
-      <Box mb="md">
-        <Title order={3} ta="center" mb="xs">
-          {title}
-        </Title>
-        <Progress value={progressPercent} striped animated radius="xl" size="sm" />
-      </Box>
+    <Card shadow="md" padding="xl" radius="md" withBorder >
+      <Stack gap="lg">
+        {/* Header Context Tracking */}
+        <Stack gap="xs">
+          <Text>
+            {title}
+          </Text>
+          <Progress value={progressPercent} radius="xl" size="sm" />
 
-      {/* Progress Metric Subtext */}
-      <Group justify="space-between" mb="lg">
-        <Text size="xs" c="dimmed" fw={700}>
-          QUESTION {currentIndex + 1} OF {totalQuestions}
-        </Text>
-        <Text size="xs" c="dimmed" fw={700}>
-          {Math.round(progressPercent)}% COMPLETE
-        </Text>
-      </Group>
-
-      {/* Dynamic Main Question Prompt Component */}
-      <Title order={4} mb="xl" style={{ lineHeight: '1.5' }}>
-        {currentQuestion.questiontext}
-      </Title>
-
-      {/* Controlled Radio Group Choice Node */}
-      <Radio.Group 
-        value={selectedOption || ''} 
-        onChange={setSelectedOption}
-        name={`question-${currentIndex}`}
-      >
-        <Stack gap="md" mb="xl">
-          {shuffledOptions.map((option, index) => (
-            <Card 
-              key={index} 
-              withBorder 
-              padding="sm" 
-              radius="sm"
-              style={{
-                borderColor: selectedOption === option ? 'var(--mantine-color-teal-filled)' : undefined,
-                transition: 'border-color 0.2s ease',
-              }}
-            >
-              <Radio 
-                value={option} 
-                label={option} 
-                styles={{ body: { cursor: 'pointer', width: '100%' } }}
-              />
-            </Card>
-          ))}
+          <Group justify="space-between" mb="lg">
+            <Text size="xs" c="dimmed" fw={700}>
+              QUESTION {currentIndex + 1} OF {totalQuestions}
+            </Text>
+            {/* <Text size="xs" c="dimmed" fw={700}>
+              {Math.round(progressPercent)}% COMPLETE
+            </Text> */}
+          </Group>
         </Stack>
-      </Radio.Group>
 
-      {/* Actions Segment */}
-      <Group justify="flex-end">
-        <Button 
-          onClick={handleNextQuestion} 
-          disabled={!selectedOption}
-          size="md"
-        >
-          {currentIndex === totalQuestions - 1 ? 'Finish Quiz' : 'Next Question'}
-        </Button>
-      </Group>
+        <Stack gap="sm">
+          {/* Dynamic Main Question Prompt Component */}
+          <Title order={4} style={{ lineHeight: '1.5' }}>
+            {currentQuestion.questiontext}
+          </Title>
+
+          {/* Controlled Radio Group Choice Node */}
+          <Radio.Group
+            value={selectedOption || ''}
+            onChange={setSelectedOption}
+            name={`question-${currentIndex}`}
+          >
+            <Stack gap="xs">
+              {shuffledOptions.map((option, index) => (
+                <Card
+                  key={index}
+                  withBorder
+                  radius="sm"
+                  style={{
+                    borderColor: selectedOption === option ? 'var(--mantine-color-teal-filled)' : undefined,
+                    transition: 'border-color 0.2s ease',
+                  }}
+                >
+                  <Radio
+                    value={option}
+                    label={option}
+                    styles={{ body: { cursor: 'pointer', width: '100%' } }}
+                  />
+                </Card>
+              ))}
+            </Stack>
+          </Radio.Group>
+        </Stack>
+
+        <Group justify="flex-end">
+          <Button
+            onClick={handleNextQuestion}
+            disabled={!selectedOption}
+            size="sm"
+          >
+            {currentIndex === totalQuestions - 1 ? 'Finish Quiz' : 'Next Question'}
+          </Button>
+        </Group>
+      </Stack>
     </Card>
   );
 };
