@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '@mantine/core';
+import { Button, Modal, Text, Loader, Stack, Center } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/context/QuizContext';
 
@@ -77,12 +77,40 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
   };
 
   return (
-    <Button
-      loading={loading}
-      onClick={handleGenerate}
-    >
-      Quiz me!
-    </Button>
+    <>
+      <Modal
+        opened={loading}
+        onClose={() => { }}
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        withCloseButton={false}
+        centered
+        size="sm"
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+      >
+        <Center>
+          <Stack align="center" gap="md" py="md">
+            <Loader size="lg" color="teal" />
+            <Stack gap={4} align="center">
+              <Text fw={600} size="lg">Generating your quiz</Text>
+              <Text size="sm" c="dimmed" ta="center">
+                Crafting questions with Gemini AI based on your content and preferences…
+              </Text>
+            </Stack>
+          </Stack>
+        </Center>
+      </Modal>
+
+      <Button
+        loading={loading}
+        onClick={handleGenerate}
+      >
+        Quiz me!
+      </Button>
+    </>
   );
 };
 
