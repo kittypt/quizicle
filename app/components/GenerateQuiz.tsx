@@ -136,7 +136,7 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
       {/* Loading Modal */}
       <Modal
         opened={loading}
-        onClose={() => {}}
+        onClose={() => { }}
         closeOnClickOutside={false}
         closeOnEscape={false}
         withCloseButton={false}

@@ -21,8 +21,8 @@ export const QuizTypeSelector = ({ value, onChange }: QuizTypeSelectorProps) => 
     <Radio.Group
       value={value}
       onChange={onChange}
-      label="Pick one package to install"
-      description="Choose a package that you will need in your application"
+      label="Select Quiz Type"
+      description="Choose the type of quiz you want to generate. This will help tailor the questions to your needs."
     >
       <Stack pt="md" gap="xs">
         {QUIZ_TYPES.map((item) => (
