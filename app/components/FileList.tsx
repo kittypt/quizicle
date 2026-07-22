@@ -1,7 +1,7 @@
 'use client';
 
 import { ActionIcon, Card, Group, Text } from '@mantine/core';
-import { IconX } from '@tabler/icons-react';
+import { IconX, IconLink, IconFile } from '@tabler/icons-react';
 import { FileEntry } from '@/app/hooks/useFileUpload';
 
 interface FileListProps {
@@ -14,19 +14,22 @@ export const FileList = ({ files, onRemove }: FileListProps) => {
   return (
     <Group>
       {files.map((entry, index) => (
-        <Card key={`${entry.file.name}-${index}`} p="xs" withBorder>
+        <Card key={`${entry.type}-${index}`} p="xs" withBorder>
           <Group>
-            {entry.iconUrl ? (
+            {entry.type === 'url' ? (
               <img
                 src={entry.iconUrl}
                 alt="favicon"
                 width={18}
                 height={18}
                 style={{ borderRadius: 4 }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
               />
             ) : null}
             <Text size="sm" style={{ overflowWrap: 'anywhere' }}>
-              {entry.file.name}
+              {entry.type === 'url' ? entry.url : entry.file.name}
             </Text>
             <ActionIcon
               variant="subtle"

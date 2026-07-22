@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 
-export type FileEntry = { file: File; iconUrl?: string };
+export type FileEntry =
+  | { type: 'file'; file: File; iconUrl?: string }
+  | { type: 'url'; url: string; title: string; iconUrl: string };
 
 const isLikelyUrl = (text: string) => {
   try {
@@ -24,32 +26,14 @@ const makeFilenameFromText = (text: string) => {
   return `${safe || 'pasted-text'}.txt`;
 };
 
-const fetchPageMetadata = async (href: string) => {
-  try {
-    // Call internal server route to bypass CORS and fetch page metadata
-    const response = await fetch('/api/scrape', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ targetUrl: href }),
-    });
-
-    if (!response.ok) throw new Error();
-    return await response.json();
-  } catch {
-    const url = new URL(href);
-    return {
-      title: url.hostname,
-      iconUrl: `${url.origin}/favicon.ico`,
-    };
-  }
-};
-
-const makeFileFromLink = async (text: string) => {
-  const trimmed = text.trim();
-  const metadata = await fetchPageMetadata(trimmed);
-  const filename = makeFilenameFromText(metadata.title);
-  const file = new File([trimmed], filename, { type: 'text/plain' });
-  return { file, iconUrl: metadata.iconUrl };
+const makeUrlEntry = (url: string): FileEntry => {
+  const parsedUrl = new URL(url);
+  return {
+    type: 'url',
+    url,
+    title: parsedUrl.hostname,
+    iconUrl: `${parsedUrl.origin}/favicon.ico`,
+  };
 };
 
 export const useFileUpload = () => {
@@ -79,13 +63,11 @@ export const useFileUpload = () => {
 
       event.preventDefault();
       if (isLikelyUrl(text)) {
-        makeFileFromLink(text).then((entry) => {
-          setFiles((existing) => [...existing, entry]);
-        });
+        setFiles((existing) => [...existing, makeUrlEntry(text.trim())]);
       } else {
         const filename = makeFilenameFromText(text);
         const file = new File([text], filename, { type: 'text/plain' });
-        setFiles((existing) => [...existing, { file }]);
+        setFiles((existing) => [...existing, { type: 'file', file }]);
       }
     };
 
@@ -94,7 +76,7 @@ export const useFileUpload = () => {
   }, []);
 
   const addFiles = (newFiles: File[]) => {
-    setFiles((existing) => [...existing, ...newFiles.map((file) => ({ file }))]);
+    setFiles((existing) => [...existing, ...newFiles.map((file) => ({ type: 'file' as const, file }))]);
   };
 
   const removeFile = (index: number) => {
