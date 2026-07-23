@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Modal, Text, Loader, Stack, Center, Alert, Group } from '@mantine/core';
+import { Button, Modal, Text, Loader, Stack, Center, Alert, Box } from '@mantine/core';
 import { IconAlertCircle, IconRefresh } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/context/QuizContext';
@@ -57,8 +57,17 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
   const { setQuiz } = useQuiz();
 
   const handleGenerate = async () => {
-    setLoading(true);
     setError(null);
+
+    if (files.length === 0) {
+      setError({
+        message: 'Please add at least one file, paste some text, or provide a URL to use as context for the quiz.',
+        retryable: false,
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
       const contexts: ContextItem[] = await Promise.all(
         files.map(async (entry): Promise<ContextItem> => {
@@ -160,38 +169,48 @@ export const GenerateQuiz: React.FC<GenerateQuizProps> = ({
         </Center>
       </Modal>
 
-      {/* Error Alert */}
-      {error && (
-        <Alert
-          variant="light"
-          color="red"
-          title="Quiz generation failed"
-          icon={<IconAlertCircle size={16} />}
-          mb="md"
-        >
-          <Stack gap="sm">
-            <Text size="sm">{error.message}</Text>
-            {error.retryable && (
-              <Button
+      <Stack align="stretch" w="100%">
+        <Box w="100%">
+          <Stack align="center">
+            {/* Error Alert — centered, width of content */}
+            {error && (
+              <Alert
                 variant="light"
                 color="red"
-                size="xs"
-                leftSection={<IconRefresh size={14} />}
-                onClick={handleGenerate}
+                title="Quiz generation failed"
+                icon={<IconAlertCircle size={16} />}
               >
-                Try again
-              </Button>
+                <Stack gap="sm" align="center">
+                  <Text size="sm" ta="center">{error.message}</Text>
+                  {error.retryable && (
+                    <Button
+                      variant="light"
+                      color="red"
+                      size="xs"
+                      leftSection={<IconRefresh size={14} />}
+                      onClick={handleGenerate}
+                    >
+                      Try again
+                    </Button>
+                  )}
+                </Stack>
+              </Alert>
             )}
           </Stack>
-        </Alert>
-      )}
+        </Box>
 
-      <Button
-        loading={loading}
-        onClick={handleGenerate}
-      >
-        Quiz me!
-      </Button>
+        {/* Button — right-aligned, width of text only */}
+        <Box w="100%">
+          <Stack align="flex-end">
+            <Button
+              loading={loading}
+              onClick={handleGenerate}
+            >
+              Quiz me!
+            </Button>
+          </Stack>
+        </Box>
+      </Stack>
     </>
   );
 };

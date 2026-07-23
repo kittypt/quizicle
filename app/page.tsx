@@ -34,7 +34,7 @@ export default function Home() {
           onInstructionsChange={setInstructions}
         />
 
-        <Group justify="flex-end">
+        <Group justify="right">
           <GenerateQuiz
             quizType={quizType}
             questionCount={questionCount}
@@ -43,6 +43,6 @@ export default function Home() {
           />
         </Group>
       </Stack>
-    </Container>
+    </Container >
   );
 }
